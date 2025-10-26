@@ -1,0 +1,7 @@
+.galaxy
+.gradle
+.idea
+.kotlin
+build
+local.properties
+.DS_Store
