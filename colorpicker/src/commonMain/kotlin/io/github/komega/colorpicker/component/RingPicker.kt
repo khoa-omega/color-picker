@@ -2,7 +2,6 @@ package io.github.komega.colorpicker.component
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -10,28 +9,28 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.util.fastRoundToInt
-import io.github.komega.colorpicker.common.polar
-import io.github.komega.colorpicker.state.RingPickerState
-import io.github.komega.colorpicker.state.rememberRingPickerState
+import io.github.komega.colorpicker.common.Math
+import io.github.komega.colorpicker.state.PickerState
+import io.github.komega.colorpicker.state.rememberPickerState
 import io.github.komega.colorpicker.style.RingPickerDefaults
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun RingPicker(
-    state: RingPickerState,
+    state: PickerState,
     thickness: Dp,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    thumb: @Composable (RingPickerState) -> Unit = { state ->
+    thumb: @Composable (PickerState) -> Unit = { state ->
         RingPickerDefaults.Thumb(state = state)
     },
-    track: @Composable (RingPickerState) -> Unit = { state ->
+    track: @Composable (PickerState) -> Unit = { state ->
         RingPickerDefaults.Track(
             state = state,
             thickness = thickness,
@@ -73,7 +72,8 @@ fun RingPicker(
         )
         layout(totalWidth, totalHeight) {
             trackPlaceable.placeRelative(trackX, trackY)
-            val thumbPosition = trackSize.center.polar(trackRadius, state.value) - thumbOffset
+            val thumbCenter = Math.cartesian(trackSize.center, trackRadius, state.degrees)
+            val thumbPosition = thumbCenter - thumbOffset
             thumbPlaceable.placeRelative(
                 thumbPosition.x.fastRoundToInt(),
                 thumbPosition.y.fastRoundToInt()
@@ -82,11 +82,12 @@ fun RingPicker(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun RingPickerPreview() {
-    val state = rememberRingPickerState(120f)
+    val state = rememberPickerState(
+        120f, 0f, 360f
+    )
     RingPicker(
         state = state,
         thickness = 32.dp

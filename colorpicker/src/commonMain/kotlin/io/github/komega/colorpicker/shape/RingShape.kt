@@ -21,11 +21,11 @@ class RingShape(val thickness: Dp) : Shape {
     ): Outline = with(density) {
         val thickness = thickness.toPx()
         val radius = size.minDimension * 0.5f
-        val outerRect = Rect(size.center, radius)
-        val innerRect = outerRect.inflate(-thickness)
         val path = Path()
         path.fillType = PathFillType.EvenOdd
+        val outerRect = Rect(size.center, radius)
         path.addOval(outerRect)
+        val innerRect = outerRect.inflate(-thickness)
         path.addOval(innerRect)
         Outline.Generic(path)
     }

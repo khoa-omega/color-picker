@@ -15,15 +15,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.komega.colorpicker.modifier.dragRing
-import io.github.komega.colorpicker.modifier.tapRing
 import io.github.komega.colorpicker.shape.RingShape
-import io.github.komega.colorpicker.state.RingPickerState
+import io.github.komega.colorpicker.state.PickerState
+import io.github.komega.colorpicker.state.draggable
+import io.github.komega.colorpicker.state.tappable
 
 object RingPickerDefaults {
     @Composable
     fun Thumb(
-        state: RingPickerState,
+        state: PickerState,
         modifier: Modifier = Modifier
     ) {
         Spacer(
@@ -32,20 +32,24 @@ object RingPickerDefaults {
                 .shadow(1.dp, CircleShape)
                 .border(4.dp, Color.White, CircleShape)
                 .drawWithContent {
-                    drawCircle(Color.hsv(state.value, 1f, 1f))
+                    drawCircle(Color.hsv(state.degrees, 1f, 1f))
                 }
         )
     }
 
     @Composable
     fun Track(
-        state: RingPickerState,
+        state: PickerState,
         thickness: Dp,
         enabled: Boolean,
         interactionSource: MutableInteractionSource,
         modifier: Modifier = Modifier
     ) {
-        val shape = remember (thickness) { RingShape(thickness) }
+        val shape = remember (thickness) {
+            RingShape(
+                thickness
+            )
+        }
         Spacer(
             modifier = modifier
                 .size(160.dp)
@@ -61,8 +65,8 @@ object RingPickerDefaults {
                     },
                     shape = shape
                 )
-                .dragRing(state, enabled, interactionSource)
-                .tapRing(state)
+                .draggable(state, enabled, interactionSource)
+                .tappable(state)
         )
     }
 }

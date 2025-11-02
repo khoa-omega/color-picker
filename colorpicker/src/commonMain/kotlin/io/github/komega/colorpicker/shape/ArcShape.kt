@@ -10,8 +10,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import io.github.komega.colorpicker.common.polar
-import io.github.komega.colorpicker.common.sanitize
+import io.github.komega.colorpicker.common.Math
 import kotlin.math.sign
 
 @Immutable
@@ -20,13 +19,12 @@ class ArcShape(
     val start: Float,
     val sweep: Float
 ) : Shape {
-    val end = (start + sweep).sanitize()
-
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline = with(density) {
+        val end = start + sweep
         val thickness = thickness.toPx()
         val halfThickness = thickness * 0.5f
         val center = size.center
@@ -34,8 +32,10 @@ class ArcShape(
         val radius = outerRadius - halfThickness
         val outerRect = Rect(center, outerRadius)
         val innerRect = outerRect.inflate(-thickness)
-        val startCapRect = Rect(center.polar(radius, start), halfThickness)
-        val endCapRect = Rect(center.polar(radius, end), halfThickness)
+        val startCapCenter = Math.cartesian(center, radius, start)
+        val startCapRect = Rect(startCapCenter, halfThickness)
+        val endCapCenter = Math.cartesian(center, radius, end)
+        val endCapRect = Rect(endCapCenter, halfThickness)
         val sign = sweep.sign
         val path = Path()
         path.arcTo(outerRect, start, sweep, false)
